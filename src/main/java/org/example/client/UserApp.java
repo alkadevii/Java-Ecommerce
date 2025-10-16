@@ -48,6 +48,14 @@ public class UserApp extends JFrame {
         topPanel.add(Box.createHorizontalStrut(15));
         topPanel.add(cartBtn);
 
+        JButton ordersBtn = new JButton("📦 View Orders");
+        ordersBtn.setBackground(new Color(231,76,60)); // red button
+        ordersBtn.setForeground(Color.WHITE);
+        ordersBtn.addActionListener(e -> new OrdersPage(loggedInUser.getUserId()).setVisible(true));
+
+        topPanel.add(Box.createHorizontalStrut(10)); // spacing between buttons
+        topPanel.add(ordersBtn);
+
         add(topPanel, BorderLayout.NORTH);
 
         JScrollPane scroll = new JScrollPane(productGallery);

@@ -100,25 +100,13 @@ public class ApiClient {
                 con.setDoOutput(true);
                 con.setRequestMethod("POST");
                 con.setRequestProperty("Content-Type", "application/json");
+                con.setRequestProperty("userId", userId); // <-- set userId in header
 
-                List<Map<String,Object>> orderItems = new ArrayList<>();
-                for (CartManager.CartItem item : items) {
-                    Map<String,Object> map = new HashMap<>();
-                    map.put("productId", item.productId);
-                    map.put("quantity", item.quantity);
-                    orderItems.add(map);
-                }
+                // No need to send JSON body since the API only needs userId from header
+                con.getOutputStream().close();
 
-                Map<String,Object> body = new HashMap<>();
-                body.put("userId", userId);
-                body.put("items", orderItems);
-
-                String json = gson.toJson(body);
-                try (OutputStream os = con.getOutputStream()) {
-                    os.write(json.getBytes(StandardCharsets.UTF_8));
-                }
-
-                return con.getResponseCode() == 200;
+                int responseCode = con.getResponseCode();
+                return responseCode == 200;
             } catch (Exception e) {
                 e.printStackTrace();
                 return false;
