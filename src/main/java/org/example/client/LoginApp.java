@@ -7,6 +7,7 @@ import java.awt.event.*;
 import java.io.*;
 import java.net.*;
 import com.google.gson.*;
+import org.example.client.models.*;
 
 public class LoginApp extends JFrame {
 
@@ -22,11 +23,7 @@ public class LoginApp extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // Apply a flat, clean look
-        UIManager.put("TabbedPane.selected", new Color(80, 120, 255));
-        UIManager.put("TabbedPane.contentAreaColor", Color.WHITE);
-        UIManager.put("TabbedPane.borderHightlightColor", Color.WHITE);
-
+        // Tabbed login/register
         JTabbedPane tabs = new JTabbedPane();
         tabs.setFont(new Font("Segoe UI", Font.BOLD, 14));
         tabs.addTab("Login", createLoginPanel());
@@ -114,15 +111,11 @@ public class LoginApp extends JFrame {
         btn.setBorder(new EmptyBorder(8, 20, 8, 20));
         btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        // Hover effect
-        btn.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) {
-                btn.setBackground(new Color(60, 100, 240));
-            }
-            public void mouseExited(MouseEvent e) {
-                btn.setBackground(new Color(80, 120, 255));
-            }
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(MouseEvent e) { btn.setBackground(new Color(60, 100, 240)); }
+            public void mouseExited(MouseEvent e) { btn.setBackground(new Color(80, 120, 255)); }
         });
+
         return btn;
     }
 
@@ -143,24 +136,29 @@ public class LoginApp extends JFrame {
             con.setRequestProperty("Content-Type", "application/json");
 
             String json = String.format("{\"username\":\"%s\",\"password\":\"%s\"}", username, password);
-            try (OutputStream os = con.getOutputStream()) {
-                os.write(json.getBytes());
-            }
+            try (OutputStream os = con.getOutputStream()) { os.write(json.getBytes()); }
 
             int code = con.getResponseCode();
             if (code == 200) {
                 InputStreamReader reader = new InputStreamReader(con.getInputStream());
                 JsonObject obj = JsonParser.parseReader(reader).getAsJsonObject();
                 String role = obj.get("role").getAsString();
+                String userId = obj.get("userId").getAsString();
+
+                // Create user object
+                User loggedInUser = new User();
+                loggedInUser.setUsername(username);
+                loggedInUser.setRole(role);
+                loggedInUser.setUserId(userId);
 
                 JOptionPane.showMessageDialog(this, "Welcome " + role + "!");
                 dispose();
 
                 SwingUtilities.invokeLater(() -> {
                     if (role.equalsIgnoreCase("admin")) {
-                        new AdminApp().setVisible(true);
+                        new AdminApp(loggedInUser).setVisible(true);
                     } else {
-                        new UserApp().setVisible(true);
+                        new UserApp(loggedInUser).setVisible(true);
                     }
                 });
             } else {
@@ -194,16 +192,12 @@ public class LoginApp extends JFrame {
             con.setRequestProperty("Content-Type", "application/json");
 
             String json = String.format("{\"username\":\"%s\",\"password\":\"%s\",\"role\":\"user\"}", username, password);
-            try (OutputStream os = con.getOutputStream()) {
-                os.write(json.getBytes());
-            }
+            try (OutputStream os = con.getOutputStream()) { os.write(json.getBytes()); }
 
             int code = con.getResponseCode();
             if (code == 200) {
                 JOptionPane.showMessageDialog(this, "Registration successful! You can now log in.", "Success", JOptionPane.INFORMATION_MESSAGE);
-                regUsername.setText("");
-                regPassword.setText("");
-                regConfirm.setText("");
+                regUsername.setText(""); regPassword.setText(""); regConfirm.setText("");
             } else {
                 BufferedReader br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
                 JOptionPane.showMessageDialog(this, "Registration failed: " + br.readLine(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -217,9 +211,7 @@ public class LoginApp extends JFrame {
         SwingUtilities.invokeLater(() -> new LoginApp().setVisible(true));
     }
 
-    // ============ Utility Inner Classes ============
-
-    // Gradient background
+    // ======= Utility Panels =======
     static class GradientPanel extends JPanel {
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
@@ -230,21 +222,15 @@ public class LoginApp extends JFrame {
         }
     }
 
-    // Rounded white panel with soft shadow effect
     static class RoundedPanel extends JPanel {
-        RoundedPanel() {
-            setOpaque(false);
-            setBorder(new EmptyBorder(15, 15, 15, 15));
-        }
+        RoundedPanel() { setOpaque(false); setBorder(new EmptyBorder(15,15,15,15)); }
         protected void paintComponent(Graphics g) {
             Graphics2D g2 = (Graphics2D) g;
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(Color.WHITE);
-            g2.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
-            g2.setColor(new Color(180, 180, 180, 80));
-            g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 20, 20);
+            g2.setColor(Color.WHITE); g2.fillRoundRect(0,0,getWidth(),getHeight(),20,20);
+            g2.setColor(new Color(180,180,180,80));
+            g2.drawRoundRect(0,0,getWidth()-1,getHeight()-1,20,20);
             super.paintComponent(g);
         }
     }
 }
-

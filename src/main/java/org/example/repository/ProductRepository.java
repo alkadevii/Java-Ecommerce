@@ -1,8 +1,6 @@
 package org.example.repository;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
 import org.example.model.Product;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface ProductRepository extends MongoRepository<Product, String> {
-    // You can define custom query methods here if needed
-}
+public interface ProductRepository extends MongoRepository<Product, String> {}

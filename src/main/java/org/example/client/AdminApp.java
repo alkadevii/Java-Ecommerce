@@ -2,8 +2,8 @@ package org.example.client;
 
 import javax.swing.*;
 import javax.swing.border.*;
-import java.util.List;
 import java.awt.*;
+import java.util.List;
 import java.awt.event.*;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -12,13 +12,26 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
+import org.example.client.models.User; // Make sure your User class exists
 
 public class AdminApp extends JFrame {
 
+    private User loggedInUser; // Store logged-in user
     private JComboBox<String> sortBox = new JComboBox<>(new String[]{"Sort by", "Brand", "Price"});
     private JPanel productGallery = new JPanel(new WrapLayout(FlowLayout.LEFT, 15, 15));
 
-    public AdminApp() {
+    // ---------------- Constructors ----------------
+    public AdminApp(User user) {
+        this.loggedInUser = user;
+        initUI();
+    }
+
+    public AdminApp() { // No-arg constructor for testing
+        initUI();
+    }
+
+    // ---------------- Initialize UI ----------------
+    private void initUI() {
         setTitle("Inventory Management Dashboard");
         setSize(950, 650);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -64,7 +77,7 @@ public class AdminApp extends JFrame {
         loadProducts();
     }
 
-    /** ---------- Dialog for Adding Product ---------- **/
+    // ---------------- Add Product Dialog ----------------
     private void showAddProductDialog() {
         JDialog dialog = new JDialog(this, "Add New Product", true);
         dialog.setSize(400, 380);
@@ -124,6 +137,7 @@ public class AdminApp extends JFrame {
         dialog.setVisible(true);
     }
 
+    // ---------------- Load Brands ----------------
     private void loadBrands(JComboBox<BrandItem> brandBox) {
         try {
             URL url = new URL("http://localhost:8080/api/brands");
@@ -141,7 +155,7 @@ public class AdminApp extends JFrame {
         }
     }
 
-    /** ---------- API Actions ---------- **/
+    // ---------------- API Actions ----------------
     private void addProduct(String name, double price, int stock, String brandId) {
         try {
             URL url = new URL("http://localhost:8080/api/products");
@@ -244,7 +258,7 @@ public class AdminApp extends JFrame {
         }
     }
 
-    /** ---------- UI Helpers ---------- **/
+    // ---------------- UI Helpers ----------------
     private JButton createStyledButton(String text) {
         JButton btn = new JButton(text);
         btn.setFocusPainted(false);
@@ -281,11 +295,12 @@ public class AdminApp extends JFrame {
         }
     }
 
+    // ---------------- Main ----------------
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new AdminApp().setVisible(true));
     }
 
-    // ---------- Models ----------
+    // ---------------- Models ----------------
     static class Product {
         private String id;
         private String name;
