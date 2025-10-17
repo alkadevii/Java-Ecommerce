@@ -2,10 +2,12 @@ package org.example.client;
 
 import javax.swing.*;
 import javax.swing.border.*;
-import java.awt.*;
 import java.util.List;
+import java.awt.*;
 import java.awt.event.*;
+import java.io.BufferedReader;
 import java.io.OutputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -56,10 +58,15 @@ public class AdminApp extends JFrame {
         addBtn.setBackground(new Color(80, 120, 255));
         addBtn.addActionListener(e -> showAddProductDialog());
 
+        JButton ordersBtn = createStyledButton("📦 View Orders");
+        ordersBtn.setBackground(new Color(52, 152, 219));
+        ordersBtn.addActionListener(e -> SwingUtilities.invokeLater(() -> new AdminOrdersPage().setVisible(true)));
+
         JPanel rightBar = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         rightBar.setOpaque(false);
         rightBar.add(sortBox);
         rightBar.add(addBtn);
+        rightBar.add(ordersBtn); // added orders button
 
         topBar.add(heading, BorderLayout.WEST);
         topBar.add(rightBar, BorderLayout.EAST);

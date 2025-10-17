@@ -61,4 +61,8 @@ public class OrderService {
     public List<Order> getUserOrders(String userId) {
         return orderRepo.findByUserId(userId);
     }
+
+    public List<Order> getAllOrders() {
+        return orderRepo.findAll();
+    }
 }

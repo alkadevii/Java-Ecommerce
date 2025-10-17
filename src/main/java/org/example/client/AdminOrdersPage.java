@@ -113,7 +113,7 @@ public class AdminOrdersPage extends JFrame {
         tableModel.setRowCount(0);
 
         try {
-            URL url = new URL("http://localhost:8080/api/orders"); // API returns all orders for admin
+            URL url = new URL("http://localhost:8080/api/orders/all"); // API returns all orders for admin
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
             con.setRequestProperty("Content-Type", "application/json");
