@@ -76,7 +76,21 @@ public class ApiClient {
         }
     }
 
+    /** Remove product from user cart */
+    public static boolean removeFromCart(String userId, String productId) {
+        try {
+            String endpoint = BASE_URL + "/cart/remove?productId=" + productId;
+            URL url = new URL(endpoint);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("DELETE");
+            con.setRequestProperty("userId", userId);
 
+            return con.getResponseCode() == 200;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
 
     /** Clear user cart */
