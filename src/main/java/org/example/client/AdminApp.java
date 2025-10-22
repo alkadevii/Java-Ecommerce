@@ -218,7 +218,7 @@ public class AdminApp extends JFrame {
                     JLabel info = new JLabel(
                             "<html><center><b>" + p.getName() + "</b><br>₹" + p.getPrice() +
                                     "<br>Stock: " + p.getStock() +
-                                    "<br><i>Brand: " + p.getBrandId() + "</i></center></html>",
+                                    "<br></center></html>",
                             SwingConstants.CENTER
                     );
                     card.add(info, BorderLayout.CENTER);
